@@ -1,8 +1,8 @@
-accelerate==0.29.3
+accelerate==0.30.0
 bitsandbytes==0.43.1
-gradio==4.27.0
+gradio==4.29.0
 scipy==1.13.0
-sentencepiece==0.1.99
-spaces==0.26.1
+sentencepiece==0.2.0
+spaces==0.28.3
 torch==2.0.0
-transformers==4.40.0
+transformers==4.40.2
