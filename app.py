@@ -3,7 +3,6 @@ from threading import Thread
 from typing import Iterator
 
 import gradio as gr
-import spaces
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
 
@@ -29,18 +28,17 @@ As a derivate work of [Llama-2-7b-chat](https://huggingface.co/meta-llama/Llama-
 this demo is governed by the original [license](https://huggingface.co/spaces/huggingface-projects/llama-2-7b-chat/blob/main/LICENSE.txt) and [acceptable use policy](https://huggingface.co/spaces/huggingface-projects/llama-2-7b-chat/blob/main/USE_POLICY.md).
 """
 
-if not torch.cuda.is_available():
-    DESCRIPTION += "\n<p>Running on CPU 🥶 This demo does not work on CPU.</p>"
-
-
 if torch.cuda.is_available():
     model_id = "meta-llama/Llama-2-7b-chat-hf"
     model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=torch.float16, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     tokenizer.use_default_system_prompt = False
+else:
+    model_path = "../Llama-2-7b-chat-hf-sharded-bf16"
+    model = AutoModelForCausalLM.from_pretrained(model_path)
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
+    tokenizer.use_default_system_prompt = False
 
-
-@spaces.GPU
 def generate(
     message: str,
     chat_history: list[tuple[str, str]],
@@ -142,4 +140,4 @@ with gr.Blocks(css="style.css") as demo:
     gr.Markdown(LICENSE)
 
 if __name__ == "__main__":
-    demo.queue(max_size=20).launch()
+    demo.queue(max_size=20).launch(server_name="0.0.0.0")
