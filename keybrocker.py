@@ -13,10 +13,9 @@ from abc import ABC, abstractmethod
 import base64
 import crypto
 import logging
-import struct
 import requests
 
-from ccnp import Eventlog, Quote
+from cctrusted_vm import CCTrustedVmSdk
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
@@ -123,7 +122,7 @@ class ItaKeyBrokerClient(KeyBrokerClientBase):
 
         LOG.debug("Getting TDX Quote by CCNP")
         user_data = base64.b64encode(pubkey_der).decode('utf-8')
-        quote = Quote.get_quote(user_data=user_data)
+        quote = CCTrustedVmSdk.inst().get_cc_report(user_data=user_data)
         if quote is None:
             raise RuntimeError("Get TDX Quote failed")
         quote = base64.b64encode(quote.quote).decode('utf-8')
