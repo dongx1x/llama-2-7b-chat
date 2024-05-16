@@ -39,6 +39,7 @@ if torch.cuda.is_available():
 else:
     model_path = "../Llama-2-7b-chat-hf-sharded-bf16-aes"
     if os.path.exists(os.path.join(model_path, "encryption-config.json")):
+        print("Models are encrypted, try to decrypt models first...")
         with open(os.path.join(model_path, "encryption-config.json"), 'r') as f:
             new_model_path = "/models/Llama-2-7b-chat-hf-sharded-bf16"
             os.mkdir(new_model_path)
@@ -47,8 +48,11 @@ else:
                 kbc = keybrocker.ItaKeyBrokerClient()
                 kbs_url = encryption_config['kbs_url']
                 key_id = encryption_config['key_id']
+                print("Try to get the key from the KBS...")
                 key = kbc.get_key(kbs_url, key_id)
+                print("Try to decrypt files: ...")
                 for file in encryption_config['files']:
+                    print(f"\t{file}")
                     crypt = crypto.AesCrypto()
                     crypt.decrypt_file(key, os.path.join(model_path, file), os.path.join(new_model_path, file.removesuffix('.aes')))
                 model_path = new_model_path
