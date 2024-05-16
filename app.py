@@ -38,6 +38,8 @@ if torch.cuda.is_available():
     tokenizer.use_default_system_prompt = False
 else:
     model_path = "../Llama-2-7b-chat-hf-sharded-bf16-aes"
+    # model_path = "/models/Llama-2-7b-chat-hf-sharded-bf16"
+    # model_path = "/home/tdx/hf/Llama-2-7b-chat-hf-sharded-bf16"
     if os.path.exists(os.path.join(model_path, "encryption-config.json")):
         print("Models are encrypted, try to decrypt models first...")
         with open(os.path.join(model_path, "encryption-config.json"), 'r') as f:
@@ -84,7 +86,7 @@ def generate(
         gr.Warning(f"Trimmed input from conversation as it was longer than {MAX_INPUT_TOKEN_LENGTH} tokens.")
     input_ids = input_ids.to(model.device)
 
-    streamer = TextIteratorStreamer(tokenizer, timeout=10.0, skip_prompt=True, skip_special_tokens=True)
+    streamer = TextIteratorStreamer(tokenizer, timeout=60.0, skip_prompt=True, skip_special_tokens=True)
     generate_kwargs = dict(
         {"input_ids": input_ids},
         streamer=streamer,

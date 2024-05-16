@@ -122,10 +122,10 @@ class ItaKeyBrokerClient(KeyBrokerClientBase):
 
         LOG.debug("Getting TDX Quote by CCNP")
         user_data = base64.b64encode(pubkey_der).decode('utf-8')
-        quote = CCTrustedVmSdk.inst().get_cc_report(user_data=user_data)
+        quote = CCTrustedVmSdk.inst().get_cc_report(data=user_data)
         if quote is None:
             raise RuntimeError("Get TDX Quote failed")
-        quote = base64.b64encode(quote.quote).decode('utf-8')
+        quote = base64.b64encode(quote.data).decode('utf-8')
 
         req_body = {
             "quote": quote,
@@ -169,4 +169,4 @@ class ItaKeyBrokerClient(KeyBrokerClientBase):
           )
         )
         crypt = crypto.AesCrypto()
-        return crypt.decrypt(wrapped_key, swk)
+        return crypt.decrypt(swk, wrapped_key)

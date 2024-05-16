@@ -103,12 +103,12 @@ class AesCrypto(CryptoBase):
         header_len = 12
         iv_len, tag_len, data_len = struct.unpack('<3I', data[:header_len])
         iv = data[header_len : (iv_len + header_len)]
-        data = data[(iv_len + header_len) : -tag_len]
+        raw_data = data[(iv_len + header_len) : -tag_len]
         tag = data[-tag_len:]
 
         LOG.debug("Decrypt data, IV len %d, tag len %d, data len %d", iv_len, tag_len, data_len)
         decryptor = Cipher(algorithms.AES(key), modes.GCM(iv, tag)).decryptor()
-        decrypted_data = decryptor.update(data) + decryptor.finalize()
+        decrypted_data = decryptor.update(raw_data) + decryptor.finalize()
         return decrypted_data
 
     def encrypt_file(self, key, input, output):
